@@ -2,7 +2,7 @@
 
 ## Current Phase
 
-Research and project design complete. Repository initialized as boilerplate — no application code written yet.
+Local development environment complete. Analytics running locally. Ready to begin Linux server setup.
 
 ---
 
@@ -10,17 +10,20 @@ Research and project design complete. Repository initialized as boilerplate — 
 
 - `Project-Overview.md` written; reflects current requirements and scope
 - `analytics-server` repository created and scaffolded
-- No analytics platform selected or deployed
-- No CI/CD pipeline configured
-- No Docker Compose services defined
-- No deployment server set up (Linux laptop not yet configured)
+- ✅ Analytics platform selected: **Umami**
+- ✅ `docker-compose.yml` written with `.env`-based secrets
+- ✅ `.env` and `.env.*` patterns added to `.gitignore`
+- ✅ Umami running locally at `http://localhost:3000`
+- ✅ Tracking script embedded in portfolio site (pointing at localhost for now)
+- ⬜ Linux server set up
+- ⬜ SSH access configured from dev machine
+- ⬜ GitHub Actions deployment pipeline
+- ⬜ Reverse proxy configured
+- ⬜ Update tracking script `src` to point at real server URL
 
 ---
 
 ## Open Decisions
-
-### Analytics Platform
-Specific self-hosted platform not yet selected. Candidates to evaluate: Plausible, Umami, PostHog, Matomo.
 
 ### Infrastructure
 - Linux distribution
@@ -47,10 +50,9 @@ Before deploying the Linux server:
 
 ## Next Steps
 
-1. Research and select analytics platform
-2. Write `docker-compose.yml` for selected platform
-3. Set up Linux on deployment laptop and document specs
-4. Configure SSH access from development machine
-5. Design and implement GitHub Actions deployment pipeline
-6. Configure reverse proxy
-7. Integrate analytics snippet into portfolio website
+1. Run hardware diagnostics on gaming laptop
+2. Install Linux on deployment laptop
+3. Configure SSH access from development machine
+4. Design and implement GitHub Actions deployment pipeline
+5. Configure reverse proxy
+6. Update tracking script `src` to point at real server URL
