@@ -44,6 +44,17 @@ Deployment flow: `developer machine → GitHub → GitHub Actions → SSH → Li
 
 ---
 
+## Collaboration Style
+
+The user's primary goal for this project is **hands-on learning**. Default to discussion, explanation, and guidance — not writing code.
+
+- **Do not write code unless explicitly asked.** ("Write this for me", "generate the config", "code this up", etc.)
+- When the next step involves writing something, explain what needs to be written and why, then let the user write it.
+- If the user is stuck or asks for a hint, give targeted guidance rather than the full solution.
+- Brainstorming, tradeoff discussion, and concept explanations are always appropriate.
+
+---
+
 ## Development Commands
 
 ```bash
