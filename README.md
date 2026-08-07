@@ -1,18 +1,22 @@
 # Analytics Server
 
-Self-hosted web analytics for my [portfolio site](https://james-dyer.github.io/portfolio-website/), deployed to a personal Linux server via Docker Compose and GitHub Actions.
+Learning-first, self-hosted web analytics for my [portfolio site](https://james-dyer.github.io/portfolio-website/), targeting a Raspberry Pi 2 Linux server.
 
 ## Overview
 
-This repository contains the infrastructure configuration for a self-hosted [Umami](https://umami.is/) analytics instance.  The deployment target is a personal Linux server running Docker, with automated deploys triggered on push to `main`.
+This repository contains an existing local proof of concept for a self-hosted [Umami](https://umami.is/) analytics instance. The next phase is to prepare a Raspberry Pi 2, validate its exact architecture and resource limits, and determine whether the current containers are a good fit.
+
+See [`docs/ROADMAP.md`](docs/ROADMAP.md) for the staged learning plan and
+[`docs/FIRST-BOOT.md`](docs/FIRST-BOOT.md) for the first hands-on session.
 
 ## Stack
 
 - **[Umami](https://umami.is/)** — open-source analytics
 - **PostgreSQL** — persistent event storage
 - **Docker Compose** — service orchestration
-- **GitHub Actions** — CI/CD pipeline
-- **Reverse proxy** — external access (in progress)
+- **Raspberry Pi OS Lite** — intended headless host operating system
+- **GitHub Actions** — later CI/CD milestone
+- **Reverse proxy and HTTPS** — later secure-access milestone
 
 ## Local Development
 
@@ -33,6 +37,7 @@ docker compose ps       # Check container status
 
 Umami will be available at `http://localhost:3000`.
 
-## Deployment
+## Current boundary
 
-Pushing to `main` triggers a GitHub Actions workflow that SSHs into the Linux server and runs `docker compose pull && docker compose up -d`. Deployment pipeline is currently in progress.
+Do not expose port 3000 or SSH to the public internet yet. The current Compose
+file is for local experimentation and has not been validated on the Pi 2.

@@ -21,23 +21,21 @@ It also serves a practical purpose: tracking traffic on the portfolio website to
 
 ## Deployment Machine
 
-The deployment environment is an older gaming laptop from approximately 2021.
+The deployment target is a Raspberry Pi 2 with 1 GB of RAM, connected to the
+home network over WiFi. The exact board revision and CPU architecture must be
+verified after the first boot; Pi 2 revisions differ, and container-image
+compatibility depends on whether the OS reports 32-bit ARMv7 or 64-bit ARMv8.
 
-Known facts:
-
-* Previously ran Windows
-* Experienced performance issues near end of regular usage
-* Will be wiped and converted to Linux
-* Will remain powered on 24/7
-* Will remain plugged in continuously
-* Connected to home WiFi
-* Internet connection is generally reliable
+The server will run headlessly and remain powered on continuously. Raspberry
+Pi OS Lite is the preferred starting operating system because this project does
+not need a desktop environment.
 
 ## Development Environment
 
 Development will primarily occur on the main laptop.
 
-The Linux laptop should be treated as a deployment target rather than the primary development machine.
+The Raspberry Pi should be treated as a deployment target rather than the
+primary development machine.
 
 ---
 
@@ -46,7 +44,8 @@ The Linux laptop should be treated as a deployment target rather than the primar
 ## Learning Goals
 
 * Linux administration
-* Docker and Docker Compose
+* Docker and Docker Compose, if supported by the chosen analytics stack on the
+  Pi's architecture
 * Containerized deployments and self-hosting
 * GitHub Actions CI/CD
 * Reverse proxy configuration
@@ -87,12 +86,14 @@ The analytics system should help answer:
 
 ## Implementation Approach
 
-Use an existing open-source analytics platform rather than building a custom analytics solution.
+Begin with the existing Umami proof of concept rather than building a custom
+analytics solution. Treat Umami-on-Pi as a hypothesis until its current image,
+database, memory usage, and CPU architecture are validated on the actual Pi 2.
 
 Required characteristics:
 
 * Self-hosted
-* Dockerized
+* Reproducible deployment (prefer Docker if hardware-compatible)
 * Persistent storage
 * Lightweight
 * Low maintenance
@@ -138,7 +139,9 @@ GitHub is the source of truth for this repository.
 
 ## Containerization
 
-Docker Compose orchestrates all services. Benefits: reproducible environments, simplified deployment, and consistent infrastructure across dev and production.
+Docker Compose currently orchestrates Umami and PostgreSQL for local
+development. It remains the preferred production approach only if both images
+support the Pi's architecture and operate reliably within its memory limit.
 
 ---
 
@@ -178,8 +181,10 @@ Potential CD responsibilities:
 A successful MVP should:
 
 * Run on the Linux server
-* Self-host a Dockerized analytics platform via Docker Compose
-* Deploy automatically via GitHub Actions on push to `main`
-* Persist analytics data across container restarts
-* Be accessible externally via a reverse proxy
+* Collect portfolio page views in a persistent data store
+* Survive a process restart and a device reboot
+* Be accessible securely over HTTPS
 * Track live traffic from the portfolio website
+
+Automated deployment is a later milestone, after a manual deployment is fully
+understood and repeatable.

@@ -25,22 +25,31 @@ Tracks phase, status, open decisions, next steps, and TODOs.
 
 This repository self-hosts an open-source analytics platform on a personal Linux server. The primary purpose is hands-on learning: Linux administration, Docker, Docker Compose, GitHub Actions CI/CD, and reverse proxy configuration.
 
-The analytics platform tracks traffic on a React/GitHub Pages portfolio site. The deployment target is an older gaming laptop (~2021) running Linux, always-on, connected via home WiFi.
+The analytics platform tracks traffic on a React/GitHub Pages portfolio site.
+The deployment target is a Raspberry Pi 2 with 1 GB RAM, running headless
+Raspberry Pi OS Lite and connected via a USB WiFi adapter. Its exact board
+revision and CPU architecture must be measured before choosing the production
+stack.
 
 ---
 
 ## Intended Architecture
 
-The analytics server is not custom-built software — it wraps an existing open-source analytics platform in Docker Compose with automated deployment.
+The analytics server is not initially custom-built software. The existing local
+proof of concept wraps Umami and PostgreSQL in Docker Compose. Production use on
+the Pi is conditional on architecture compatibility and measured resource use.
 
 Target stack:
-- Self-hosted open-source analytics platform (not yet selected — see `Progress.md`)
-- Docker Compose for service orchestration
+- Existing local Umami + PostgreSQL proof of concept
+- Docker Compose for service orchestration if the Pi supports the images reliably
 - GitHub Actions for CI/CD: push to `main` triggers automated deploy to the Linux server
 - Reverse proxy (not yet selected) for external access
 - Analytics tracking embedded in the React/GitHub Pages portfolio site
 
-Deployment flow: `developer machine → GitHub → GitHub Actions → SSH → Linux server → Docker Compose`
+Target deployment flow: `developer machine → GitHub → GitHub Actions → SSH → Raspberry Pi → service`
+
+Automation is intentionally deferred until the learner can deploy, inspect,
+back up, restore, and troubleshoot the service manually.
 
 ---
 
