@@ -4,14 +4,15 @@ This roadmap is ordered so each phase teaches and proves one layer before the
 next one is added. The commands and configuration should be typed and explained
 by the learner; the repository records decisions and repeatable procedures.
 
-## Phase 0 — Understand the existing proof of concept
+## Phase 0 — Understand the architecture change
 
-Goal: explain the current request path and each service in `docker-compose.yml`.
+Goal: explain the current request path, persistence, and why the original stack
+was replaced.
 
-- Find the Umami script in the portfolio's `index.html`.
-- Trace browser → tracking endpoint → Umami → PostgreSQL.
+- Compare the earlier Umami/PostgreSQL proof of concept with Offen/SQLite.
+- Trace browser → tracking endpoint → Offen → SQLite.
 - Explain ports, environment variables, volumes, health checks, and restarts.
-- Confirm local events appear in the Umami dashboard.
+- Record why Umami cannot be deployed here without an ARMv7 image.
 
 Exit check: draw the request path and explain what data survives `docker compose down`.
 
@@ -42,19 +43,18 @@ Exit check: identify a running service, inspect its logs, stop it, and start it.
 
 ## Phase 3 — Validate the analytics architecture
 
-Goal: make a measured decision about the stack on 1 GB ARM hardware.
+Goal: validate the selected Offen/SQLite stack on 1 GB ARMv7 hardware.
 
 - Record model, architecture, OS version, RAM, swap, and free storage.
-- Verify that every required container image publishes a compatible architecture.
+- Confirm the pinned Offen image publishes `linux/arm/v7`.
 - Run the stack only on the LAN and observe idle/startup RAM, CPU, and temperature.
 - Test database persistence through container restart and full device reboot.
 - Pin image versions before calling the deployment repeatable.
 
-Decision gate:
-
-- Continue with Umami + PostgreSQL if images work and the Pi remains responsive.
-- Otherwise select a lighter supported analytics service or build a tiny educational
-  event collector only after writing explicit privacy and data-retention requirements.
+Decision gate: continue with Offen if it remains responsive and persistent on
+the Pi. If it does not, record the measurements before considering a native
+binary, different hardware, or a custom collector with explicit privacy and
+data-retention requirements.
 
 ## Phase 4 — Make manual deployment reliable
 
@@ -73,7 +73,8 @@ Exit check: rebuild the service from the repo plus a documented backup.
 Goal: accept analytics events from an HTTPS portfolio without exposing admin tools.
 
 - Choose a domain/subdomain and secure ingress approach.
-- Put a reverse proxy in front of the analytics app and obtain TLS certificates.
+- Choose between Offen AutoTLS and a privacy-aware reverse proxy, then obtain TLS
+  certificates. If using a proxy, prevent access logs from retaining visitor IPs.
 - Keep SSH and the database off the public internet.
 - Add firewall rules, strong admin credentials, updates, and basic monitoring.
 - Update the portfolio tracker from localhost to the final HTTPS script URL.

@@ -22,15 +22,14 @@ It also serves a practical purpose: tracking traffic on the portfolio website to
 ## Deployment Machine
 
 The deployment target is a Raspberry Pi 2 Model B v1.1 with 1 GB of RAM. The
-2026-08-15 inspection recorded Raspberry Pi OS Lite (32-bit) reporting an `arm`
-architecture. Container-image compatibility must still be validated against the
-actual host environment.
+2026-08-15 inspection recorded Raspberry Pi OS Lite (32-bit); subsequent
+inspection confirmed `armv7l`, corresponding to Docker platform `linux/arm/v7`.
 
-Ethernet is the preferred home-network connection. The Realtek RTL8188CUS USB
-WiFi adapter is detected, but connection attempts failed because of an apparent
-Protected Management Frames policy mismatch. See the dated
-`docs/project-details-2026-08-15.md` snapshot for the observations; addresses,
-versions, storage figures, and network state in that document may be stale.
+Ethernet is the preferred home-network connection. A Ralink RT5370 USB WiFi
+adapter also connects successfully and provides a secondary LAN path. The
+Realtek RTL8188CUS failure recorded in
+`docs/project-details-2026-08-15.md` is a historical observation. Addresses,
+versions, storage figures, and network state in that dated snapshot may be stale.
 
 The server will run headlessly and remain powered on continuously. Raspberry
 Pi OS Lite is the preferred starting operating system because this project does
@@ -54,7 +53,7 @@ primary development machine.
   Pi's architecture
 * Containerized deployments and self-hosting
 * GitHub Actions CI/CD
-* Reverse proxy configuration
+* HTTPS and reverse proxy concepts
 * Environment and secrets management
 
 ---
@@ -92,9 +91,10 @@ The analytics system should help answer:
 
 ## Implementation Approach
 
-Begin with the existing Umami proof of concept rather than building a custom
-analytics solution. Treat Umami-on-Pi as a hypothesis until its current image,
-database, memory usage, and CPU architecture are validated on the actual Pi 2.
+Use Offen Fair Web Analytics with SQLite rather than building a custom analytics
+solution. The official `offen/offen:v1.4.2` image publishes an ARMv7 variant;
+the earlier Umami proof of concept was rejected because its image does not.
+Runtime memory use and persistence must still be validated on the Pi 2.
 
 Required characteristics:
 
@@ -130,7 +130,7 @@ The analytics project should establish experience with:
 * GitHub Actions
 * Automated deployment
 * Environment management
-* Reverse proxy configuration
+* HTTPS ingress and reverse proxy concepts
 * Domain and networking concepts
 
 ---
@@ -145,9 +145,9 @@ GitHub is the source of truth for this repository.
 
 ## Containerization
 
-Docker Compose currently orchestrates Umami and PostgreSQL for local
-development. It remains the preferred production approach only if both images
-support the Pi's architecture and operate reliably within its memory limit.
+Docker Compose orchestrates a single pinned Offen container. SQLite data is
+stored in a named volume. The deployment must operate reliably within the Pi's
+1 GB memory limit and survive both container and device restarts.
 
 ---
 

@@ -27,26 +27,28 @@ This repository self-hosts an open-source analytics platform on a personal Linux
 
 The analytics platform tracks traffic on a React/GitHub Pages portfolio site.
 The deployment target is a Raspberry Pi 2 Model B v1.1 with 1 GB RAM, running
-headless Raspberry Pi OS Lite (32-bit) and currently using Ethernet. A dated
+headless Raspberry Pi OS Lite (32-bit). Its architecture has been confirmed as
+`armv7l` (Docker platform `linux/arm/v7`). Ethernet remains preferred, with a
+working Ralink RT5370 USB WiFi adapter as an alternate connection. A dated
 hardware and network snapshot is recorded in
 `docs/project-details-2026-08-15.md`; transient values in it may be stale. The
-USB WiFi adapter was detected but could not connect because of an apparent
-Protected Management Frames policy mismatch. Production container compatibility
-and resource use still need to be validated on the reported ARM environment.
+Realtek adapter failure recorded there is historical. Offen image compatibility
+has been validated; runtime resource use and persistence still need testing.
 
 ---
 
 ## Intended Architecture
 
-The analytics server is not initially custom-built software. The existing local
-proof of concept wraps Umami and PostgreSQL in Docker Compose. Production use on
-the Pi is conditional on architecture compatibility and measured resource use.
+The analytics server is not custom-built software. It runs Offen Fair Web
+Analytics with SQLite in Docker Compose. This replaces the earlier local Umami
+and PostgreSQL proof of concept because Umami does not publish an ARMv7 image.
 
 Target stack:
-- Existing local Umami + PostgreSQL proof of concept
-- Docker Compose for service orchestration if the Pi supports the images reliably
+- Offen Fair Web Analytics `v1.4.2`, pinned to a release with an ARMv7 image
+- SQLite in a named Docker volume for persistent storage
+- Docker Compose for service orchestration
 - GitHub Actions for CI/CD: push to `main` triggers automated deploy to the Linux server
-- Reverse proxy (not yet selected) for external access
+- Secure HTTPS ingress (Offen AutoTLS or a privacy-aware proxy; not yet selected)
 - Analytics tracking embedded in the React/GitHub Pages portfolio site
 
 Target deployment flow: `developer machine → GitHub → GitHub Actions → SSH → Raspberry Pi → service`

@@ -1,7 +1,8 @@
 # First Hands-on Session: Flash and Inspect the Pi
 
-The purpose of this session is not to install Umami. It is to create a known,
-reachable Linux host and learn what hardware is actually available.
+The purpose of this session is not to install analytics software. It is to
+create a known, reachable Linux host and learn what hardware is actually
+available.
 
 ## Before flashing
 
