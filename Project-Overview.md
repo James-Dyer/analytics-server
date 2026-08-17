@@ -21,10 +21,16 @@ It also serves a practical purpose: tracking traffic on the portfolio website to
 
 ## Deployment Machine
 
-The deployment target is a Raspberry Pi 2 with 1 GB of RAM, connected to the
-home network over WiFi. The exact board revision and CPU architecture must be
-verified after the first boot; Pi 2 revisions differ, and container-image
-compatibility depends on whether the OS reports 32-bit ARMv7 or 64-bit ARMv8.
+The deployment target is a Raspberry Pi 2 Model B v1.1 with 1 GB of RAM. The
+2026-08-15 inspection recorded Raspberry Pi OS Lite (32-bit) reporting an `arm`
+architecture. Container-image compatibility must still be validated against the
+actual host environment.
+
+Ethernet is the preferred home-network connection. The Realtek RTL8188CUS USB
+WiFi adapter is detected, but connection attempts failed because of an apparent
+Protected Management Frames policy mismatch. See the dated
+`docs/project-details-2026-08-15.md` snapshot for the observations; addresses,
+versions, storage figures, and network state in that document may be stale.
 
 The server will run headlessly and remain powered on continuously. Raspberry
 Pi OS Lite is the preferred starting operating system because this project does

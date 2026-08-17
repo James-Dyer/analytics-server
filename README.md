@@ -4,10 +4,13 @@ Learning-first, self-hosted web analytics for my [portfolio site](https://james-
 
 ## Overview
 
-This repository contains an existing local proof of concept for a self-hosted [Umami](https://umami.is/) analytics instance. The next phase is to prepare a Raspberry Pi 2, validate its exact architecture and resource limits, and determine whether the current containers are a good fit.
+This repository contains an existing local proof of concept for a self-hosted [Umami](https://umami.is/) analytics instance. The Raspberry Pi 2 has been prepared and inspected; the next phase is to validate container compatibility and resource use on its reported 32-bit ARM environment.
 
 See [`docs/ROADMAP.md`](docs/ROADMAP.md) for the staged learning plan and
 [`docs/FIRST-BOOT.md`](docs/FIRST-BOOT.md) for the first hands-on session.
+The dated [`docs/project-details-2026-08-15.md`](docs/project-details-2026-08-15.md)
+snapshot records the observed Pi hardware, OS, storage, access, and network state;
+its transient values may now be stale.
 
 ## Stack
 

@@ -26,10 +26,13 @@ Tracks phase, status, open decisions, next steps, and TODOs.
 This repository self-hosts an open-source analytics platform on a personal Linux server. The primary purpose is hands-on learning: Linux administration, Docker, Docker Compose, GitHub Actions CI/CD, and reverse proxy configuration.
 
 The analytics platform tracks traffic on a React/GitHub Pages portfolio site.
-The deployment target is a Raspberry Pi 2 with 1 GB RAM, running headless
-Raspberry Pi OS Lite and connected via a USB WiFi adapter. Its exact board
-revision and CPU architecture must be measured before choosing the production
-stack.
+The deployment target is a Raspberry Pi 2 Model B v1.1 with 1 GB RAM, running
+headless Raspberry Pi OS Lite (32-bit) and currently using Ethernet. A dated
+hardware and network snapshot is recorded in
+`docs/project-details-2026-08-15.md`; transient values in it may be stale. The
+USB WiFi adapter was detected but could not connect because of an apparent
+Protected Management Frames policy mismatch. Production container compatibility
+and resource use still need to be validated on the reported ARM environment.
 
 ---
 
