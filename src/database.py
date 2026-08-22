@@ -18,3 +18,7 @@ def init_database(app: Flask) -> None:
 
     app.extensions["database_engine"] = engine
     app.extensions["session_factory"] = session_factory
+
+    from . import models
+
+    Base.metadata.create_all(engine)
