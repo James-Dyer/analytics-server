@@ -1,7 +1,5 @@
 from pathlib import Path
-
 from flask import Flask
-
 from .database import init_database
 
 
@@ -19,7 +17,9 @@ def create_app(test_config=None):
     init_database(app)
 
     from .routes import main
+    from .dashboard import dashboard
 
+    app.register_blueprint(dashboard)
     app.register_blueprint(main)
 
     return app
