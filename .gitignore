@@ -2,3 +2,9 @@
 .env.*
 **/.env
 **/.env.*
+.DS_Store
+.venv/
+__pycache__/
+*.py[cod]
+instance/
+.pytest_cache/
