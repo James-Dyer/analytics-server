@@ -10,6 +10,17 @@ and across a full Pi reboot. Public ingress remains intentionally out of scope.
 
 ---
 
+## Deployment Record
+
+- LAN deployment verified: 2026-08-23
+- Tested application-image source commit:
+  `0727ebb267929edcb54b5d1ac2c9b7d1cd9ff001`
+- Pi checkout was cleaned through Git before the image was rebuilt
+- Health, event collection, dashboard visibility, and named-volume persistence
+  across forced container recreation were verified from the clean checkout
+
+---
+
 ## Status
 
 - ✅ Custom Flask application factory and health endpoint
