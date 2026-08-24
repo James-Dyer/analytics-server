@@ -1,60 +1,78 @@
 # Analytics Server
 
-Learning-first, self-hosted web analytics for my [portfolio site](https://james-dyer.github.io/portfolio-website/), targeting a Raspberry Pi 2 Linux server.
-
-## Overview
-
-This repository deploys [Offen Fair Web Analytics](https://www.offen.dev/) to a
-Raspberry Pi 2. Offen was selected after the Pi was confirmed to use 32-bit
-ARMv7 and the Umami image was found not to publish an ARMv7 build.
-
-See [`docs/ROADMAP.md`](docs/ROADMAP.md) for the staged learning plan and
-[`docs/FIRST-BOOT.md`](docs/FIRST-BOOT.md) for the first hands-on session.
-The dated [`docs/project-details-2026-08-15.md`](docs/project-details-2026-08-15.md)
-snapshot records the observed Pi hardware, OS, storage, access, and network state;
-its transient values may now be stale.
+Learning-first, self-hosted analytics for the
+[portfolio site](https://james-dyer.github.io/portfolio-website/), targeting a
+32-bit ARMv7 Raspberry Pi 2.
 
 ## Stack
 
-- **[Offen](https://www.offen.dev/)** — privacy-focused, open-source analytics
-- **SQLite** — lightweight persistent event storage
-- **Docker Compose** — service orchestration
-- **Raspberry Pi OS Lite** — intended headless host operating system
-- **GitHub Actions** — later CI/CD milestone
-- **HTTPS ingress** — Offen AutoTLS or a privacy-aware proxy, selected later
+- Flask HTTP service and server-rendered dashboard
+- SQLAlchemy ORM with SQLite persistence
+- Gunicorn production WSGI server
+- Docker Compose for repeatable deployment
+- `python:3.13.15-slim-bookworm`, which publishes `linux/arm/v7`
 
-## Local Development
+The service accepts validated page-view events at `POST /events`, reports
+application and database health at `GET /healthz`, and displays collected data
+at `GET /dashboard/`.
 
-Requires Docker and a `.env` file containing an Offen application secret:
+## Local development
 
-```dotenv
-OFFEN_SECRET=replace-with-a-generated-secret
-```
-
-Generate the value with `docker run --rm offen/offen:v1.4.2 secret -quiet`. Do not
-commit the resulting `.env` file or paste the secret into chat or terminal
-transcripts.
-
-Create the first account before starting the service. The command prompts for
-the account password without displaying it:
+Create and activate a virtual environment, then install development
+dependencies:
 
 ```bash
-docker compose run --rm offen setup -email YOUR_EMAIL -name YOUR_SITE
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --requirement requirements-dev.txt
 ```
+
+Run the development server:
 
 ```bash
-docker compose up -d    # Start all services
-docker compose down     # Stop all services
-docker compose logs -f  # Tail logs
-docker compose ps       # Check container status
+flask --app analytics run --debug
 ```
 
-Offen will be available at `http://localhost:3000`. Its built-in health endpoint
-is `http://localhost:3000/healthz`.
+Run the tests:
 
-## Current boundary
+```bash
+python -m pytest -q
+```
 
-Do not expose port 3000 or SSH to the public internet yet. The current Compose
-file binds Offen to all host interfaces for LAN testing. Do not forward that
-port through the router; public collection requires a separately designed HTTPS
-ingress configuration.
+The development database is stored at `instance/analytics.db` and is ignored by
+Git.
+
+## Production container
+
+Build and start the Gunicorn service:
+
+```bash
+docker compose up --build -d
+docker compose ps
+docker compose logs -f analytics
+```
+
+Open `http://localhost:3000/dashboard/` or check health:
+
+```bash
+curl --fail http://localhost:3000/healthz
+```
+
+Send a local test event:
+
+```bash
+curl --request POST http://localhost:3000/events \
+  --header 'Content-Type: application/json' \
+  --data '{"event_type":"pageview","path":"/deployment-test","referrer_host":null,"session_id":"manual-test"}'
+```
+
+SQLite data is stored in the `analytics-data` Docker volume and survives
+container replacement. See [the LAN deployment runbook](docs/LAN-DEPLOYMENT.md)
+for deployment and persistence checks on the Pi.
+
+## Current security boundary
+
+This configuration is for LAN validation only. Port 3000 binds to all host
+interfaces so another device on the LAN can test it. Do not forward this port
+through the router. The dashboard has no authentication, HTTPS is not yet
+configured, and browser-origin controls have not been added.

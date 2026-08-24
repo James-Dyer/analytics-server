@@ -1,17 +1,21 @@
 ---
 services:
-  offen:
-    image: offen/offen:v1.4.2
+  analytics:
+    build:
+      context: .
+    image: analytics-server:local
     ports:
-      - "3000:80"
+      - "3000:8000"
     environment:
-      OFFEN_DATABASE_DIALECT: sqlite3
-      OFFEN_DATABASE_CONNECTIONSTRING: /var/opt/offen/offen.db
-      OFFEN_SECRET: ${OFFEN_SECRET:?Set OFFEN_SECRET in .env}
+      DATABASE_URL: sqlite:////data/analytics.db
+      LOG_LEVEL: INFO
+      MAX_CONTENT_LENGTH: "8192"
     volumes:
-      - offen-data:/var/opt/offen
+      - analytics-data:/data
     init: true
     restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
 
 volumes:
-  offen-data:
+  analytics-data:

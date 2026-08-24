@@ -91,10 +91,11 @@ The analytics system should help answer:
 
 ## Implementation Approach
 
-Use Offen Fair Web Analytics with SQLite rather than building a custom analytics
-solution. The official `offen/offen:v1.4.2` image publishes an ARMv7 variant;
-the earlier Umami proof of concept was rejected because its image does not.
-Runtime memory use and persistence must still be validated on the Pi 2.
+Use a custom, deliberately small Python analytics service. Flask handles event
+collection and a server-rendered dashboard, SQLAlchemy provides the persistence
+layer, and SQLite stores events. Gunicorn serves the application in production.
+The Docker runtime uses an official Python image that publishes a 32-bit ARMv7
+variant. Runtime memory use and persistence must still be validated on the Pi 2.
 
 Required characteristics:
 
@@ -145,9 +146,9 @@ GitHub is the source of truth for this repository.
 
 ## Containerization
 
-Docker Compose orchestrates a single pinned Offen container. SQLite data is
-stored in a named volume. The deployment must operate reliably within the Pi's
-1 GB memory limit and survive both container and device restarts.
+Docker Compose builds and orchestrates a single custom Flask/Gunicorn container.
+SQLite data is stored in a named volume. The deployment must operate reliably
+within the Pi's 1 GB memory limit and survive both container and device restarts.
 
 ---
 

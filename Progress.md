@@ -2,52 +2,67 @@
 
 ## Current Phase
 
-The Raspberry Pi 2 is reachable over Ethernet and WiFi with SSH key
-authentication. ARMv7 image compatibility has been investigated, and the
-repository now targets Offen with SQLite. Ready to install Docker and validate
-the service on the Pi.
+The repository now implements a custom Flask/SQLAlchemy analytics service and
+contains a production Gunicorn container intended for a 32-bit ARMv7 Raspberry
+Pi 2. The production container is running on the Pi's LAN. Collection and
+SQLite persistence have been verified locally, across a Pi container restart,
+and across a full Pi reboot. Public ingress remains intentionally out of scope.
 
 ---
 
 ## Status
 
-- `Project-Overview.md` written; reflects current requirements and scope
-- `analytics-server` repository created and scaffolded
-- ✅ Analytics platform selected: **Offen Fair Web Analytics**
-- ✅ Umami rejected for production because its image does not publish ARMv7
-- ✅ `offen/offen:v1.4.2` confirmed to publish `linux/arm/v7`
-- ✅ `docker-compose.yml` updated for pinned Offen + persistent SQLite
-- ✅ `.env`-based Offen secret remains excluded from Git
-- ✅ `.env` and `.env.*` patterns added to `.gitignore`
-- ✅ Earlier Umami proof of concept ran locally at `http://localhost:3000`
-- ⬜ Replace the portfolio's old Umami tracking script with Offen's script
-- ✅ Raspberry Pi OS Lite flashed, updated, and first boot completed
-- ✅ Pi revision, reported architecture, storage, and network recorded in
-  `docs/project-details-2026-08-15.md`
-- ✅ Linux user, hostname, and LAN SSH access configured
-- ✅ SSH key authentication configured and password SSH login disabled
-- ✅ Ralink RT5370 WiFi adapter connected; Ethernet retains the preferred route
+- ✅ Custom Flask application factory and health endpoint
+- ✅ Validated page-view collection at `POST /events`
+- ✅ SQLAlchemy event model with SQLite persistence
+- ✅ Server-rendered dashboard at `GET /dashboard/`
+- ✅ Unit and request tests for health, validation, persistence, and dashboard
+- ✅ Production and development dependencies separated
+- ✅ Gunicorn configured with one worker and two threads
+- ✅ ARMv7-compatible Python 3.13 container base selected
+- ✅ Container runs as a non-root user
+- ✅ Compose uses a named volume for SQLite persistence
+- ✅ Request bodies limited to 8 KiB
+- ✅ Database health failures return HTTP 503
+- ✅ Application and Gunicorn logs write to container stdout/stderr
+- ✅ Production container built and exercised locally
+- ✅ Container restart and replacement persistence verified locally
+- ✅ ARMv7 image cross-built and health-checked under emulation
+- ✅ Raspbian Docker 26.1.5 and Compose 2.26.1 installed on the Pi
+- ✅ Service deployed and reachable from the development laptop over the LAN
+- ✅ Persistence verified across container restart and full Pi reboot
+- ✅ Pi measurements recorded: healthy within 35 seconds of observed startup;
+  Gunicorn processes approximately 18 MiB and 35 MiB RSS; 714 MiB host memory
+  available; 11 GB disk free; 48.2°C shortly after reboot
+- ✅ Pi kernel limitation recorded: container memory limits/accounting unavailable
 - ⬜ Firewall, DHCP reservation, and backups configured and documented
-- ⬜ Offen runtime resource use and SQLite persistence validated on the Pi
-- ⬜ Linux server set up
-- ✅ SSH access configured from dev machine over the local network
-- ⬜ GitHub Actions deployment pipeline
+- ⬜ Exact-origin CORS and browser tracker implemented
+- ⬜ Dashboard access restricted before public ingress
 - ⬜ Secure HTTPS ingress configured
-- ⬜ Update tracking script `src` to point at real server URL
+- ⬜ GitHub Actions deployment pipeline
 
 ---
 
 ## Open Decisions
 
 ### Infrastructure
-- Whether 1 GB RAM is sufficient for Offen during startup and normal operation
-- HTTPS ingress choice (Offen AutoTLS or a privacy-aware reverse proxy)
-- Whether to reserve an Ethernet address with DHCP
-- Remote access strategy (LAN-only SSH preferred; do not expose SSH directly)
-- Authentication
+
+- Whether a future OS/kernel should enable container memory accounting
+- HTTPS ingress choice: privacy-aware reverse proxy or secure tunnel
+- Whether to reserve the Ethernet address with DHCP
+- Remote access strategy beyond LAN-only SSH
+- Dashboard access method before public collection
+
+### Analytics
+
+- Bot/noise filtering policy after real traffic is observed
+- Data retention period
+- Seven- and thirty-day dashboard summaries and activity visualization
 
 ### CI/CD
-Exact GitHub Actions pipeline implementation not yet designed.
+
+Exact GitHub Actions pipeline implementation is intentionally deferred until the
+manual deployment and rollback path are repeatable.
 
 ---
 
@@ -55,20 +70,16 @@ Exact GitHub Actions pipeline implementation not yet designed.
 
 The Pi was flashed and inspected on 2026-08-15. The dated snapshot records a
 Raspberry Pi 2 Model B v1.1, 16 GB microSD card, 32-bit Raspberry Pi OS Lite,
-working LAN SSH, and Ethernet as the preferred network connection. The
-RTL8188CUS WiFi adapter was detected but could not complete authentication due
-to an apparent Protected Management Frames policy mismatch. A replacement
-Ralink RT5370 adapter now works. Values such as observed LAN addresses and
-storage usage are historical and may now be stale.
+working LAN SSH, and Ethernet as the preferred network connection. A replacement
+Ralink RT5370 WiFi adapter also works. Addresses, package versions, storage use,
+and current reachability may now be stale.
 
 ---
 
 ## Next Steps
 
-1. Install Docker and Docker Compose on the Pi
-2. Learn basic navigation, permissions, processes, services, packages, and logs
-3. Generate the Offen secret and create the first account locally on the Pi
-4. Deploy Offen and measure startup/idle CPU, memory, storage, and temperature
-5. Verify SQLite persistence across container and device restarts; test backup/restore
-6. Add secure HTTPS ingress, then replace the portfolio tracking script
-7. Add deployment automation only after the manual workflow is repeatable
+1. Commit and push the LAN deployment implementation
+2. Configure backups and perform a SQLite restore test
+3. Decide how the dashboard will remain private before public collection
+4. Add exact-origin CORS, rate limiting, and the browser tracker
+5. Add HTTPS ingress only after those controls are ready

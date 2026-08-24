@@ -4,15 +4,15 @@ This roadmap is ordered so each phase teaches and proves one layer before the
 next one is added. The commands and configuration should be typed and explained
 by the learner; the repository records decisions and repeatable procedures.
 
-## Phase 0 — Understand the architecture change
+## Phase 0 — Understand the analytics architecture
 
 Goal: explain the current request path, persistence, and why the original stack
 was replaced.
 
-- Compare the earlier Umami/PostgreSQL proof of concept with Offen/SQLite.
-- Trace browser → tracking endpoint → Offen → SQLite.
+- Compare the earlier Umami/PostgreSQL and Offen plans with Flask/SQLite.
+- Trace browser → Flask event endpoint → SQLAlchemy → SQLite.
 - Explain ports, environment variables, volumes, health checks, and restarts.
-- Record why Umami cannot be deployed here without an ARMv7 image.
+- Record why the lightweight custom service fits the learning goals and hardware.
 
 Exit check: draw the request path and explain what data survives `docker compose down`.
 
@@ -43,18 +43,17 @@ Exit check: identify a running service, inspect its logs, stop it, and start it.
 
 ## Phase 3 — Validate the analytics architecture
 
-Goal: validate the selected Offen/SQLite stack on 1 GB ARMv7 hardware.
+Goal: validate the Flask/Gunicorn/SQLite stack on 1 GB ARMv7 hardware.
 
 - Record model, architecture, OS version, RAM, swap, and free storage.
-- Confirm the pinned Offen image publishes `linux/arm/v7`.
+- Confirm the pinned Python base image publishes `linux/arm/v7`.
 - Run the stack only on the LAN and observe idle/startup RAM, CPU, and temperature.
 - Test database persistence through container restart and full device reboot.
 - Pin image versions before calling the deployment repeatable.
 
-Decision gate: continue with Offen if it remains responsive and persistent on
-the Pi. If it does not, record the measurements before considering a native
-binary, different hardware, or a custom collector with explicit privacy and
-data-retention requirements.
+Decision gate: continue with the containerized Flask service if it remains
+responsive and persistent on the Pi. If it does not, record the measurements
+before adjusting Gunicorn, the memory ceiling, the container base, or hardware.
 
 ## Phase 4 — Make manual deployment reliable
 
@@ -73,8 +72,8 @@ Exit check: rebuild the service from the repo plus a documented backup.
 Goal: accept analytics events from an HTTPS portfolio without exposing admin tools.
 
 - Choose a domain/subdomain and secure ingress approach.
-- Choose between Offen AutoTLS and a privacy-aware reverse proxy, then obtain TLS
-  certificates. If using a proxy, prevent access logs from retaining visitor IPs.
+- Choose a privacy-aware reverse proxy or tunnel, then obtain TLS certificates.
+  Prevent ingress access logs from retaining visitor IPs.
 - Keep SSH and the database off the public internet.
 - Add firewall rules, strong admin credentials, updates, and basic monitoring.
 - Update the portfolio tracker from localhost to the final HTTPS script URL.

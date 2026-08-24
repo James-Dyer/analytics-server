@@ -1,5 +1,7 @@
 from flask import Blueprint, current_app, jsonify, request
 from sqlalchemy import text
+from sqlalchemy.exc import SQLAlchemyError
+
 from .models import Event
 
 main = Blueprint("main", __name__)
@@ -9,8 +11,12 @@ main = Blueprint("main", __name__)
 def healthz():
     engine = current_app.extensions["database_engine"]
 
-    with engine.connect() as connection:
-        connection.execute(text("SELECT 1"))
+    try:
+        with engine.connect() as connection:
+            connection.execute(text("SELECT 1"))
+    except SQLAlchemyError:
+        current_app.logger.exception("Database health check failed")
+        return jsonify(status="unhealthy", database="error"), 503
 
     return jsonify(status="ok", database="ok")
 

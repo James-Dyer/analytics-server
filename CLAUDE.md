@@ -32,23 +32,26 @@ headless Raspberry Pi OS Lite (32-bit). Its architecture has been confirmed as
 working Ralink RT5370 USB WiFi adapter as an alternate connection. A dated
 hardware and network snapshot is recorded in
 `docs/project-details-2026-08-15.md`; transient values in it may be stale. The
-Realtek adapter failure recorded there is historical. Offen image compatibility
-has been validated; runtime resource use and persistence still need testing.
+Realtek adapter failure recorded there is historical. The official Python
+container base publishes ARMv7; runtime resource use and persistence still need
+testing.
 
 ---
 
 ## Intended Architecture
 
-The analytics server is not custom-built software. It runs Offen Fair Web
-Analytics with SQLite in Docker Compose. This replaces the earlier local Umami
-and PostgreSQL proof of concept because Umami does not publish an ARMv7 image.
+The analytics server is a deliberately small custom Python service. Flask
+collects page-view events and renders the dashboard, SQLAlchemy maps events to
+SQLite, and Gunicorn serves the application in production. This replaces both
+the earlier Umami/PostgreSQL proof of concept and the later Offen plan.
 
 Target stack:
-- Offen Fair Web Analytics `v1.4.2`, pinned to a release with an ARMv7 image
+- Flask and SQLAlchemy with pinned Python dependencies
+- Gunicorn with a conservative worker/thread configuration for the Pi 2
 - SQLite in a named Docker volume for persistent storage
 - Docker Compose for service orchestration
 - GitHub Actions for CI/CD: push to `main` triggers automated deploy to the Linux server
-- Secure HTTPS ingress (Offen AutoTLS or a privacy-aware proxy; not yet selected)
+- Secure HTTPS ingress through a privacy-aware proxy or tunnel; not yet selected
 - Analytics tracking embedded in the React/GitHub Pages portfolio site
 
 Target deployment flow: `developer machine → GitHub → GitHub Actions → SSH → Raspberry Pi → service`

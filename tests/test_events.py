@@ -105,3 +105,17 @@ def test_create_event_rejects_non_json_body(client):
     assert response.get_json() == {
         "error": "Request body must be JSON",
     }
+
+
+def test_create_event_rejects_oversized_body(client):
+    response = client.post(
+        "/events",
+        json={
+            "event_type": "pageview",
+            "path": "/" + ("x" * 9000),
+            "session_id": "session-1",
+        },
+    )
+
+    assert response.status_code == 413
+    assert response.get_json() == {"error": "Request body is too large"}
